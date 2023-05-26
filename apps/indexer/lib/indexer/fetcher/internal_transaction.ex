@@ -220,7 +220,7 @@ defmodule Indexer.Fetcher.InternalTransaction do
 
     address_hash_to_block_number =
       Enum.into(addresses_params, %{}, fn %{fetched_coin_balance_block_number: block_number, hash: hash} ->
-        {hash, block_number}
+        {String.downcase(hash), block_number}
       end)
 
     empty_block_numbers =
@@ -317,6 +317,7 @@ defmodule Indexer.Fetcher.InternalTransaction do
     case error do
       %{data: data, message: "historical backend error" <> _} -> invalidate_block_from_error(data)
       %{data: data, message: "genesis is not traceable"} -> invalidate_block_from_error(data)
+      %{data: data, message: "transaction not found"} -> invalidate_block_from_error(data)
       _ -> :ok
     end
   end
